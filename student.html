@@ -127,7 +127,7 @@
     <h2>Student Dashboard</h2>
     <div class="options">
         <button onclick="uploadActivity()">Upload Activity Certificates</button>
-        <button onclick="viewCertificates()">View Certificates</button>
+        <button onclick="viewMarks()">View Marks</button>
         <button onclick="viewPoints()">View Certificates and Activity Points</button>
         <button onclick="viewAttendance()">View Attendance</button>
         <button onclick="chat()">Chat</button>        
@@ -196,6 +196,12 @@
         window.location.href = 'student-chat.html';
         
     }
+
+    function viewMarks() {
+        //alert("Viewing Marks...");
+        window.location.href = 'view-marks.html';
+    }
+
 </script>
 
 </body>

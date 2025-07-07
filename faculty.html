@@ -125,7 +125,7 @@
         <option value="hod">HOD</option>
         <option value="dean">Dean</option>
         <option value="staff-advisor">Staff Advisor</option>
-        <option value="other-faculty">Other Faculty</option>
+        <option value="other-faculty">Professor</option>
     </select>
 </div>
 
@@ -133,7 +133,7 @@
 <div id="principal-section" class="section">
     <h2>Principal Dashboard</h2>
     <div class="options">
-        <button onclick="viewAttendance()">View Attendance</button>
+        <button onclick="viewconsoleAttendance()">View Year Attendance</button>
         <button onclick="viewMarks()">View Marks</button>
         <button onclick="viewCertificates()">View Certificates</button>
         <button onclick="chat()">Chat</button>
@@ -143,7 +143,7 @@
 <div id="hod-section" class="section">
     <h2>HOD Dashboard</h2>
     <div class="options">
-        <button onclick="viewAttendance()">View Attendance</button>
+        <button onclick="viewconsoleAttendance()">View Year Attendance</button>
         <button onclick="viewMarks()">View Marks</button>
         <button onclick="viewCertificates()">View Certificates</button>
         <button onclick="chat()">Chat</button>
@@ -153,7 +153,7 @@
 <div id="dean-section" class="section">
     <h2>Dean Dashboard</h2>
     <div class="options">
-        <button onclick="viewAttendance()">View Attendance</button>
+        <button onclick="viewconsoleAttendance()">View Year Attendance</button>
         <button onclick="viewMarks()">View Marks</button>
         <button onclick="viewCertificates()">View Certificates</button>
         <button onclick="chat()">Chat</button>
@@ -175,7 +175,7 @@
 </div>
 
 <div id="other-faculty-section" class="section">
-    <h2>Other Faculty Dashboard</h2>
+    <h2>Professor Dashboard</h2>
     <div class="options">
         <button onclick="uploadAttendance()">Upload Attendance (By Subject)</button>
         <button onclick="viewAttendance()">View Attendance</button>
@@ -211,29 +211,32 @@
         }
     }
 
+    function viewconsoleAttendance() {
+        //alert("Viewing Attendance...");
+        window.location.href = 'attendance-yearview.html';
+    }
+
     function viewAttendance() {
-        alert("Viewing Attendance...");
         window.location.href = 'attendance-view.html';
     }
 
     function uploadMarks() {
-    alert("Redirecting to the mark uploading page...");
     window.location.href = 'mark-upload.html'; // Redirect to mark uploading page
 }
 
 
     function viewMarks() {
-        alert("Viewing Marks...");
+        //alert("Viewing Marks...");
         window.location.href = 'view-marks.html';
     }
 
     function viewCertificates() {
-        alert("Viewing Certificates...");
+        //alert("Viewing Certificates...");
         window.location.href = 'view-certificates.html'
     }
 
     function verifyActivity() {
-        alert("Verifying Activity Certificates...");
+        //alert("Verifying Activity Certificates...");
          window.location.href = 'verify-activity.html';
         // Add logic to verify activity certificates as Staff Advisor
     }

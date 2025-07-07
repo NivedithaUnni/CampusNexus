@@ -162,37 +162,20 @@
         window.location.href = 'view-marks.html';
     }
     
-
     function viewCertificates() {
-        fetch(`/view-certificates/${studentId}`)
-            .then(response => response.json())
-            .then(certificates => {
-                const certificateList = document.getElementById('certificate-list');
-                certificateList.innerHTML = '';
-
-                certificates.forEach(cert => {
-                    const certDiv = document.createElement('div');
-                    certDiv.classList.add('certificate-item');
-                    certDiv.innerHTML = `
-                        <h4>${cert.certificateName}</h4>
-                        <p>Date: ${new Date(cert.certificateDate).toLocaleDateString()}</p>
-                        <p>Level: ${cert.level || 'N/A'}</p>
-                        <p>Prize: ${cert.prize || 'N/A'}</p>
-                        <p>Mark: ${cert.mark || 'N/A'}</p>
-                        <a href="${cert.certificateFile}" target="_blank">View Certificate</a>
-                    `;
-                    certificateList.appendChild(certDiv);
-                });
-            });
+        //alert("Viewing Certificates...");
+        window.location.href = 'view-certificates.html'
     }
+   
 
     function viewPoints() {
-        alert("Functionality under development");
-    }
+            window.location.href = 'view-Student-certificate.html'
+   }
 
     function viewAttendance() {
-        alert("Functionality under development");
+        window.location.href = 'attendance-view.html'
     }
+
 </script>
 
 </body>

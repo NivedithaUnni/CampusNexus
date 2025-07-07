@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('attendanceview.jpg') no-repeat center center;
+            background: url('attendance-bg.jpg') no-repeat center center;
             background-size: cover;
             margin: 0;
             padding: 20px;
@@ -80,64 +80,38 @@
     <h2>View Attendance</h2>
 
     <form id="attendance-view-form">
+        
         <div class="form-group">
-            <label for="subjectName">Subject Name:</label>
-            <input type="text" id="subjectName" name="subjectName" placeholder="Enter Subject Name" required>
+            <label for="registerNo">Register number:</label>
+            <input type="text" id="registerNo" name="registerNo" placeholder="Enter Register number " required>
         </div>
         <div class="form-group">
-            <label for="semester">Semester:</label>
-            <input type="text" id="semester" name="semester" placeholder="Enter Semester Name" required>
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="year" required>
         </div>
-        <div class="form-group">
-            <label for="batch">Batch Name:</label>
-            <input type="text" id="batch" name="batch" placeholder="Enter Batch Name" required>
-        </div>
-        <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required>
-        </div>
-        <div class="form-group">
-            <label for="section">Class:</label>
-            <input type="text" id="section" name="section" min="1" max="8" placeholder="Enter Class" required>
-        </div>
+        
         <div class="form-group">
             <button type="button" id="download-report">Download Attendance</button>
         </div>
-        <a href="/faculty">Back to Dashboard</a>
     </form>
+    <a href="/faculty">Back to Dashboard</a>
 
-    <!-- Attendance Summary Section -->
-    <table id="attendance-summary">
-        <thead>
-            <tr>
-                <th>Subject Name</th>
-                <th>Date</th>
-                <th>Hour Number</th>
-                <th>Student Roll No</th>
-                <th>Student Register No</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Attendance rows will be appended here -->
-        </tbody>
-    </table>
 </div>
 
 <script>
 
     document.getElementById('download-report').addEventListener('click', function() {
-        const subjectName = document.getElementById('subjectName').value;
-        const section = document.getElementById('section').value;
-        const semester = document.getElementById('semester').value;
-        const batch = document.getElementById('batch').value;
-        const date = document.getElementById('date').value;
-
+      //  const subjectName = document.getElementById('subjectName').value;
+        //const section = document.getElementById('section').value;
+        //const semester = document.getElementById('semester').value;
+        //const batch = document.getElementById('batch').value;
+        const year = document.getElementById('year').value;
+        const registno = document.getElementById('registerNo').value;
         // Trigger backend request to download report as Excel
-        fetch('http://localhost:3053/download-attendance-report', {
+        fetch('http://localhost:3053/download-yearly-report', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ subjectName, section, semester, batch, date })
+            body: JSON.stringify({ year, registno })
         })
         .then(response => response.blob())
         .then(blob => {

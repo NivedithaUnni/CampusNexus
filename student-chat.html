@@ -1,138 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Chat</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #eceff1;
-        }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-        #message-container {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-            padding: 10px;
-            border-radius: 6px;
-            background-color: #fafafa;
-        }
-        .message {
-            border-bottom: 1px solid #e0e0e0;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-        .message:last-child {
-            border-bottom: none;
-        }
-        .message strong {
-            font-size: 14px;
-            color: #007bff;
-        }
-        .message small {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-        .notification {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 10px;
-            display: none;
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Chat</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eceff1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 24px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+    #message-container {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #fafafa;
+    }
+    .message {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .message:last-child {
+      border-bottom: none;
+    }
+    .message strong {
+      font-size: 14px;
+      color: #007bff;
+    }
+    .message small {
+      display: block;
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+    .notification {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Student Chat</h2>
-    <div class="notification" id="notification">New Message Received</div>
-    <div id="message-container">
-        <!-- Messages will be displayed here -->
-    </div>
+  <h2>Student Chat</h2>
+  <div class="notification" id="notification">New Message Received</div>
+  <div id="message-container">
+    <p style="text-align: center; color: #999;">Loading messages...</p>
+  </div>
 </div>
 
 <script>
-const reg_no = '123457'; // Replace with the actual student registration number
+  // Replace this with actual session or backend value
+  const regNo = prompt("Enter your registration number or class:");
 
-// Fetch messages for the student
-function fetchMessages() {
-    fetch(`http://localhost:3053/api/messages/view-messages/${reg_no}`)
-        .then(response => response.json())
-        .then(messages => {
-            const messageContainer = document.getElementById('message-container');
-            messageContainer.innerHTML = ''; // Clear previous messages
+  let previousMessageCount = 0;
 
-            if (messages.length === 0) {
-                messageContainer.innerHTML = '<p style="text-align: center; color: #999;">No messages yet.</p>';
-            }
+  function showNotification() {
+    const notification = document.getElementById('notification');
+    notification.style.display = 'block';
+    setTimeout(() => {
+      notification.style.display = 'none';
+    }, 3000);
+  }
 
-            messages.forEach(msg => {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.innerHTML = `<strong>${msg.sender}:</strong> ${msg.message} <small>${new Date(msg.timestamp).toLocaleString()}</small>`;
-                messageContainer.appendChild(messageElement);
-            });
-        })
-        .catch(error => console.error('Error fetching messages:', error));
-}
+  function fetchMessages(initialLoad = false) {
+    fetch(`http://localhost:3053/api/messages/view-messages/${regNo}`)
+      .then(response => response.json())
+      .then(messages => {
+        const messageContainer = document.getElementById('message-container');
+        messageContainer.innerHTML = '';
 
-// Check for new messages periodically
-setInterval(fetchMessages, 5000);
+        if (messages.length === 0) {
+          messageContainer.innerHTML = '<p style="text-align: center; color: #999;">No messages yet.</p>';
+          return;
+        }
 
-// Notification if new messages arrive
-let previousMessageCount = 0;
-setInterval(() => {
-    fetch(`http://localhost:3053/api/messages/view-messages/${reg_no}`)
-        .then(response => response.json())
-        .then(messages => {
-            if (messages.length > previousMessageCount) {
-                const notification = document.getElementById('notification');
-                notification.style.display = 'block';
-                previousMessageCount = messages.length;
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 3000); // Hide notification after 3 seconds
-            }
-        })
-        .catch(error => console.error('Error checking for new messages:', error));
-}, 3000); // Check for new messages every 3 seconds
+        messages.forEach(msg => {
+          const messageElement = document.createElement('div');
+          messageElement.classList.add('message');
+          messageElement.innerHTML = `<strong>${msg.sender}:</strong> ${msg.message} <small>${new Date(msg.timestamp).toLocaleString()}</small>`;
+          messageContainer.appendChild(messageElement);
+        });
+
+        if (!initialLoad && messages.length > previousMessageCount) {
+          showNotification();
+        }
+        previousMessageCount = messages.length;
+      })
+      .catch(error => {
+        console.error('Error fetching messages:', error);
+      });
+  }
+
+  // Initial fetch
+  fetchMessages(true);
+
+  // Auto-refresh every 5 seconds
+  setInterval(() => {
+    fetchMessages(false);
+  }, 5000);
 </script>
 
 </body>

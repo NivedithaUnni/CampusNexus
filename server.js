@@ -189,7 +189,10 @@ app.post('/login', async (req, res) => {
         return res.redirect('/faculty'); // Redirect to faculty dashboard
     } else if (user.role === 'student') {
         return res.redirect('/student'); // Redirect to student dashboard
-    } else {
+    } 
+    else if (user.role === 'parent') {
+        return res.redirect('/parent'); 
+    }else {
         return res.send("Invalid role! Please contact administrator.");
     }
 });
@@ -208,6 +211,13 @@ app.get('/student', (req, res) => {
         return res.redirect('/'); // Redirect to login if not student
     }
     res.sendFile(path.join(__dirname, 'student.html')); // Load the student dashboard
+});
+
+app.get('/parent', (req, res) => {
+    if (!req.session.user || req.session.user.role !== 'parent') {
+        return res.redirect('/'); // Redirect to login if not student
+    }
+    res.sendFile(path.join(__dirname, 'parent.html')); // Load the student dashboard
 });
 
 // Route to view certificates for Student
@@ -308,6 +318,35 @@ app.post('/api/attendance', async (req, res) => {
     }
 });
 
+// Example route in your Node.js backend
+app.get('//attendance-yearview/:reg_no', async (req, res) => {
+    const { subjectName, section, semester, batch, date } = req.body;
+
+    try {
+            const attendanceRecords = await Attendance.find({
+            subjectName: subjectName,
+            section: section,
+            semester: semester,
+            batch: batch,
+            // Optionally match the specific date or range, depending on requirements
+        })
+        .select({
+            subjectName: 1,
+            date: 1, // Assuming 'date' field in MongoDB stores the full date
+            studentRollNo: 1,
+            studentRegisterNo: 1,
+            year: { $year: "$date" } // Extract the year from the date field
+        });
+
+        // Convert the data to Excel or any other format as needed
+        // ...
+
+        res.status(200).json(attendanceRecords);
+    } catch (error) {
+        console.error('Error retrieving attendance data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 // Route to upload marks (Faculty)
 app.post('/upload-marks', async (req, res) => {
@@ -372,7 +411,7 @@ app.get('/api/view-certificates', async (req, res) => {
 });
 
 // Route for faculty to fetch student certificates by studentId
-app.get('/faculty/view-student-certificates/:studentId', async (req, res) => {
+app.get('/view-student-certificates/:studentId', async (req, res) => {
     const studentId = req.query.studentId;
 
     // Example: Faculty authorization check can be added here
@@ -438,6 +477,7 @@ const attendanceSchema = new mongoose.Schema({
 // Creating a compound index on reg_no and marks.subject
 attendanceSchema.index({ subjectName: 1, section: 1 , semester: 1, batch: 1 ,date: 1}, { unique: true });
 
+const Attendance = mongoose.model('Attendance', attendanceSchema);
 
 app.post('/download-attendance-report', async (req, res) => {
     const { subjectName, section, semester, batch, date } = req.body;
@@ -494,6 +534,60 @@ app.post('/download-attendance-report', async (req, res) => {
         console.log("Done",res);
     } catch (error) {
         res.status(500).send('Error generating report');
+    }
+});
+
+app.post('/download-yearly-report', async (req, res) => {
+    console.log("Inside the api")
+    const { year, registno } = req.body;
+    console.log(year, registno)
+    try {
+        // Query attendance records based on year and register number
+        const attendanceRecords = await Attendance.find({
+            'students.registerNo': registno,
+            date: { $regex: `^${year}` } // Matching the year at the start of the date string
+          }).exec();
+
+        console.log(attendanceRecords)
+        if (!attendanceRecords || attendanceRecords.length === 0) {
+            return res.status(404).json({ message: 'No attendance records found for the specified year and registration number' });
+        }
+
+        // Create Excel file
+        const workbook = new ExcelJS.Workbook(); // Create a new workbook
+        const worksheet = workbook.addWorksheet('Attendance Report'); // Add new worksheet
+
+        // Add headers to the worksheet
+        worksheet.columns = [
+            { header: 'Subject Name', key: 'subjectName', width: 20 },
+            { header: 'Date', key: 'date', width: 15 },
+            { header: 'Hour', key: 'hour', width: 10 },
+            { header: 'Roll No', key: 'rollNo', width: 10 },
+            { header: 'Register No', key: 'registerNo', width: 15 },
+            { header: 'Status', key: 'status', width: 10 }
+        ];
+
+        // Add data to the worksheet
+        attendanceRecords.forEach(record => {
+            worksheet.addRow({
+                subjectName: record.subjectName,
+                date: record.date,
+                hour: record.hour,
+                rollNo: record.students.rollNo,
+                registerNo: record.students.registerNo,
+                status: record.students.status
+            });
+        });
+
+        // Set the response headers and send the Excel file
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=attendance_report.xlsx');
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating attendance report:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 

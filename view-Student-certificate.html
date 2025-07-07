@@ -134,6 +134,7 @@
                                 (certDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
                                 certDate.getFullYear();
                             let totalPoint = parseInt(cert.correspondingPoints) + parseInt(cert.prizeMark);
+                            
                             table += `<tr>
                                 <td>${cert.certificateName}</td>
                                 <td><a href="/uploads/${cert.certificateFile}" target="_blank">View Certificate</a></td>
@@ -148,7 +149,7 @@
                             </tr>`;
                             totalPoint = 0;
                         });
-
+                        
                         table += `</tbody></table>`;
                         document.getElementById('certificate-table').innerHTML = table;
                         document.getElementById('total-points').innerText = `Total Activity Points: ${totalPoints}`;
